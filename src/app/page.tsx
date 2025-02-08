@@ -5,6 +5,7 @@ import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "./components/ui/card"
 import { useSession, signIn, signOut } from "next-auth/react"
+import Navbar from "./components/ui/navbar"
 
 export default function PlantGrowthPlaylist() {
   const { data: session } = useSession()
@@ -94,8 +95,16 @@ export default function PlantGrowthPlaylist() {
   }
 
   return (
+    <div className="w-full">
+      <Navbar/>
     <div className="container mx-auto p-4 flex flex-col justify-center items-center h-screen">
-      <h1 style={cardTitleStyle}>growbeets</h1>
+
+      <div style={{ maxWidth: '600px', textAlign: 'center' }}>
+        <p style={{ fontFamily: 'aileron, sans-serif', fontWeight: 300, fontStyle: 'normal', fontSize: '1.5rem', textAlign: 'justify', lineHeight: '1.0', textTransform: 'uppercase' }}>
+          Music is Nature’s secret language. Research shows that specific sound frequencies can actually boost plant growth, helping them thrive in ways we never imagined.
+        </p>
+        <h1 style={cardTitleStyle}>growbeets</h1>
+      </div>
       <Card className="w-full max-w-md mx-auto mt-4" style={bodyTextStyle}>
         <CardDescription style={{ ...bodyTextStyle, textAlign: 'center' }}>Enter a plant name to generate a growth-stimulating playlist!</CardDescription>
         <CardContent style={bodyTextStyle}>
@@ -113,7 +122,6 @@ export default function PlantGrowthPlaylist() {
                   {loading ? "Generating Playlist..." : "Generate Playlist"}
                 </Button>
               </form>
-              <Button onClick={() => signOut()} style={bodyTextStyle}>Sign out</Button>
             </>
           ) : (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
@@ -137,6 +145,7 @@ export default function PlantGrowthPlaylist() {
           </CardFooter>
         )}
       </Card>
+    </div>
     </div>
   )
 }
