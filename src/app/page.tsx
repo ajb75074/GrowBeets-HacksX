@@ -76,8 +76,8 @@ export default function PlantGrowthPlaylist() {
     <div className="container mx-auto p-4">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
-          <CardTitle>Plant Growth Playlist Generator</CardTitle>
-          <CardDescription>Enter a plant name to generate a growth-stimulating playlist</CardDescription>
+          <CardTitle>GrowBeets Playlist Generator</CardTitle>
+          <CardDescription>Enter a plant name to generate a growth-stimulating playlist!</CardDescription>
         </CardHeader>
         <CardContent>
           {session ? (

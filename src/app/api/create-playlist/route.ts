@@ -73,8 +73,8 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: `${plant} Growth Playlist`,
-        description: `A playlist generated for optimal ${plant} growth.`,
+        name: `${plant} GrowBeets Playlist`,
+        description: `A GrowBeets playlist generated for optimal ${plant} growth. Let's dance!`,
         public: false,
       }),
     })
@@ -126,3 +126,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message || "Failed to create playlist" }, { status: 500 })
   }
 }
+
+
