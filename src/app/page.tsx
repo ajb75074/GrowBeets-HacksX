@@ -15,6 +15,27 @@ export default function PlantGrowthPlaylist() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const cardTitleStyle = {
+    fontFamily: 'aileron, sans-serif',
+    fontWeight: 700,
+    fontStyle: 'normal',
+    fontSize: '9rem',
+    letterSpacing: '-10px',
+  };
+
+  const bodyTextStyle = {
+    fontFamily: 'aileron, sans-serif',
+    fontWeight: 100,
+    fontStyle: 'normal',
+    letterSpacing: '1px',
+  };
+
+  const signInButtonStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '0.75rem 1.5rem',
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -73,13 +94,11 @@ export default function PlantGrowthPlaylist() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="w-full max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle>GrowBeets Playlist Generator</CardTitle>
-          <CardDescription>Enter a plant name to generate a growth-stimulating playlist!</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="container mx-auto p-4 flex flex-col justify-center items-center h-screen">
+      <h1 style={cardTitleStyle}>growbeets</h1>
+      <Card className="w-full max-w-md mx-auto mt-4" style={bodyTextStyle}>
+        <CardDescription style={{ ...bodyTextStyle, textAlign: 'center' }}>Enter a plant name to generate a growth-stimulating playlist!</CardDescription>
+        <CardContent style={bodyTextStyle}>
           {session ? (
             <>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -90,28 +109,30 @@ export default function PlantGrowthPlaylist() {
                   placeholder="Enter plant name"
                   required
                 />
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" disabled={loading} style={bodyTextStyle}>
                   {loading ? "Generating Playlist..." : "Generate Playlist"}
                 </Button>
               </form>
-              <Button onClick={() => signOut()}>Sign out</Button>
+              <Button onClick={() => signOut()} style={bodyTextStyle}>Sign out</Button>
             </>
           ) : (
-            <Button onClick={() => signIn()}>Sign in with Spotify</Button>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+              <Button onClick={() => signIn()} style={bodyTextStyle}>Sign in with Spotify</Button>
+            </div>
           )}
         </CardContent>
         {error && (
-          <CardContent>
-            <p className="text-red-500">{error}</p>
+          <CardContent style={bodyTextStyle}>
+            <p className="text-red-500" style={bodyTextStyle}>{error}</p>
           </CardContent>
         )}
         {playlist.length > 0 && (
-          <CardFooter>
+          <CardFooter style={bodyTextStyle}>
             <div className="w-full">
               {playlistLink && (
                 <iframe style={{ borderRadius: '12px' }} src={playlistLink} width="100%" height="352" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
               )}
-              <Button onClick={() => handleAddToLibrary()}>Add to Library</Button>
+              <Button onClick={() => handleAddToLibrary()} style={bodyTextStyle}>Add to Library</Button>
             </div>
           </CardFooter>
         )}
