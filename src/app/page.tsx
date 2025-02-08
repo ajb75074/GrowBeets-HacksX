@@ -108,18 +108,10 @@ export default function PlantGrowthPlaylist() {
         {playlist.length > 0 && (
           <CardFooter>
             <div className="w-full">
-              <h3 className="font-bold mb-2">Generated Playlist:</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {playlist.map((track, index) => (
-                  <li key={index} className="text-sm">
-                    {track.name} by {track.artist}
-                  </li>
-                ))}
-              </ul>
-              <Button onClick={() => handleAddToLibrary()}>Add to Library</Button>
               {playlistLink && (
                 <iframe style={{ borderRadius: '12px' }} src={playlistLink} width="100%" height="352" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
               )}
+              <Button onClick={() => handleAddToLibrary()}>Add to Library</Button>
             </div>
           </CardFooter>
         )}
