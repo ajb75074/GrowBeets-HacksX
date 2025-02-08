@@ -93,15 +93,34 @@ export async function POST(req: Request) {
         const searchData = await searchResponse.json()
         if (searchData.tracks?.items?.length > 0) {
           const track = searchData.tracks.items[0]
-          return `${track.name} by ${track.artists[0].name}`
+          return track.uri || null
         }
         return null
       })
     )
 
-    const validTracks = trackUris.filter((track): track is string => track !== null)
+    const validTrackUris = trackUris.filter((track): track is string => track !== null)
 
-    return NextResponse.json({ playlist: validTracks, playlistId: playlistId })
+    // Add tracks to playlist
+    const addTracksResponse = await fetch(`${spotifyApiUrl}/playlists/${playlistId}/tracks`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uris: validTrackUris,
+      }),
+    })
+
+    if (!addTracksResponse.ok) {
+      console.error("Error adding tracks to playlist:", addTracksResponse.status, addTracksResponse.statusText)
+    }
+
+    const playlistLink = `https://open.spotify.com/playlist/${playlistId}`;
+    console.log("Playlist link:", playlistLink);
+
+    return NextResponse.json({ playlist: validTrackUris, playlistId: playlistId })
   } catch (error: any) {
     console.error("Error:", error)
     return NextResponse.json({ error: error.message || "Failed to create playlist" }, { status: 500 })

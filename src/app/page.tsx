@@ -9,8 +9,9 @@ import { useSession, signIn, signOut } from "next-auth/react"
 export default function PlantGrowthPlaylist() {
   const { data: session } = useSession()
   const [plant, setPlant] = useState("")
-  const [playlist, setPlaylist] = useState<string[]>([])
+  const [playlist, setPlaylist] = useState<{ uri: string; name: string; artist: string }[]>([])
   const [playlistId, setPlaylistId] = useState<string | null>(null)
+  const [playlistLink, setPlaylistLink] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -35,6 +36,7 @@ export default function PlantGrowthPlaylist() {
       const data = await response.json()
       setPlaylist(data.playlist)
       setPlaylistId(data.playlistId)
+      setPlaylistLink(`https://open.spotify.com/embed/playlist/${data.playlistId}?utm_source=generator`)
     } catch (error) {
       console.error("Error:", error)
       setError("Failed to create playlist. Please try again.")
@@ -108,13 +110,16 @@ export default function PlantGrowthPlaylist() {
             <div className="w-full">
               <h3 className="font-bold mb-2">Generated Playlist:</h3>
               <ul className="list-disc pl-5 space-y-1">
-                {playlist.map((song, index) => (
+                {playlist.map((track, index) => (
                   <li key={index} className="text-sm">
-                    {song}
+                    {track.name} by {track.artist}
                   </li>
                 ))}
               </ul>
               <Button onClick={() => handleAddToLibrary()}>Add to Library</Button>
+              {playlistLink && (
+                <iframe style={{ borderRadius: '12px' }} src={playlistLink} width="100%" height="352" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              )}
             </div>
           </CardFooter>
         )}
