@@ -18,25 +18,29 @@ export async function POST(req: Request) {
           content: "You are a helpful assistant that knows about plant growth and sound frequencies.",
         },
         {
+          // TODO: Have it return the frequency in the JSON as well
           role: "user",
-          content: `Analyze the plant frequency preference for ${plant} and suggest 10 songs that match that frequency. Return only the song names in a JSON array format.`,
+          content: `Analyze the plant frequency preference for ${plant} and suggest 10 songs that match that frequency. Also, determine the optimal frequency in Hz for ${plant}. Return ONLY JSON object with the following format: { "songs": ["song1", "song2", ...], "frequency": 440 }.`,
         },
       ],
     })
 
-    const songListString = completion.choices[0].message.content
-    let songList: string[]
+    const responseString = completion.choices[0].message.content
+    let response: { songs: string[]; frequency: number }
 
     try {
-      songList = JSON.parse(songListString)
+      // Attempt to parse the JSON response
+      console.log(responseString);
+      response = JSON.parse(responseString);
     } catch (error) {
-      console.error("Error parsing ChatGPT response:", error)
-      // If parsing fails, try to extract songs from the text response
-      songList = songListString
-        .split("\n")
-        .filter((line) => line.trim())
-        .slice(0, 10)
+      console.error("Error parsing ChatGPT response:", error);
+      return NextResponse.json({ error: "Failed to parse ChatGPT response" }, { status: 500 });
     }
+
+    const songList = response.songs.filter((song): song is string => song !== null);
+    const frequency = response.frequency;
+
+    console.log("Optimal frequency:", frequency);
 
     // 2. Create Spotify playlist
     const clientId = process.env.SPOTIFY_CLIENT_ID
@@ -76,9 +80,8 @@ export async function POST(req: Request) {
     const validTracks = trackUris.filter((track): track is string => track !== null)
 
     return NextResponse.json({ playlist: validTracks })
-  } catch (error) {
-    console.error("Error:", error)
-    return NextResponse.json({ error: "Failed to create playlist" }, { status: 500 })
+  } catch (error: any) {
+    console.error("Error:", error);
+    return NextResponse.json({ error: error.message || "Failed to create playlist" }, { status: 500 });
   }
 }
-

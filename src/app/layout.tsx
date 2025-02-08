@@ -6,7 +6,7 @@ import type React from "react" // Import React
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Plant Growth Playlist Generator",
+  title: "GrowBeets",
   description: "Generate playlists to stimulate plant growth based on sound frequencies",
 }
 
