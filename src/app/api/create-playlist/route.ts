@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../auth/[...nextauth]/route"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   try {
     const { plant } = await req.json()
 
@@ -18,7 +26,6 @@ export async function POST(req: Request) {
           content: "You are a helpful assistant that knows about plant growth and sound frequencies.",
         },
         {
-          // TODO: Have it return the frequency in the JSON as well
           role: "user",
           content: `Analyze the plant frequency preference for ${plant} and suggest 10 songs that match that frequency. Also, determine the optimal frequency in Hz for ${plant}. Return ONLY JSON object with the following format: { "songs": ["song1", "song2", ...], "frequency": 440 }.`,
         },
@@ -30,42 +37,57 @@ export async function POST(req: Request) {
 
     try {
       // Attempt to parse the JSON response
-      console.log(responseString);
-      response = JSON.parse(responseString);
+      console.log(responseString)
+      response = JSON.parse(responseString)
     } catch (error) {
-      console.error("Error parsing ChatGPT response:", error);
-      return NextResponse.json({ error: "Failed to parse ChatGPT response" }, { status: 500 });
+      console.error("Error parsing ChatGPT response:", error)
+      return NextResponse.json({ error: "Failed to parse ChatGPT response" }, { status: 500 })
     }
 
-    const songList = response.songs.filter((song): song is string => song !== null);
-    const frequency = response.frequency;
+    const songList = response.songs.filter((song): song is string => song !== null)
+    const frequency = response.frequency
 
-    console.log("Optimal frequency:", frequency);
+    console.log("Optimal frequency:", frequency)
 
-    // 2. Create Spotify playlist
-    const clientId = process.env.SPOTIFY_CLIENT_ID
-    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET
     const spotifyApiUrl = "https://api.spotify.com/v1"
 
-    // Get access token
-    const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
+    if (!session.accessToken) {
+      return NextResponse.json({ error: "No access token" }, { status: 401 })
+    }
+
+    // Get user ID
+    const userResponse = await fetch(`${spotifyApiUrl}/me`, {
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "Basic " + Buffer.from(`${clientId}:${clientSecret}`).toString("base64"),
+        Authorization: `Bearer ${session.accessToken}`,
       },
-      body: "grant_type=client_credentials",
     })
 
-    const tokenData = await tokenResponse.json()
-    const accessToken = tokenData.access_token
+    const userData = await userResponse.json()
+    const userId = userData.id
+
+    // Create playlist
+    const playlistResponse = await fetch(`${spotifyApiUrl}/users/${userId}/playlists`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: `${plant} Growth Playlist`,
+        description: `A playlist generated for optimal ${plant} growth.`,
+        public: false,
+      }),
+    })
+
+    const playlistData = await playlistResponse.json()
+    const playlistId = playlistData.id
 
     // Search for tracks and get their URIs
     const trackUris = await Promise.all(
       songList.map(async (song) => {
         const searchResponse = await fetch(`${spotifyApiUrl}/search?q=${encodeURIComponent(song)}&type=track&limit=1`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${session.accessToken}`,
           },
         })
         const searchData = await searchResponse.json()
@@ -74,14 +96,14 @@ export async function POST(req: Request) {
           return `${track.name} by ${track.artists[0].name}`
         }
         return null
-      }),
+      })
     )
 
     const validTracks = trackUris.filter((track): track is string => track !== null)
 
-    return NextResponse.json({ playlist: validTracks })
+    return NextResponse.json({ playlist: validTracks, playlistId: playlistId })
   } catch (error: any) {
-    console.error("Error:", error);
-    return NextResponse.json({ error: error.message || "Failed to create playlist" }, { status: 500 });
+    console.error("Error:", error)
+    return NextResponse.json({ error: error.message || "Failed to create playlist" }, { status: 500 })
   }
 }

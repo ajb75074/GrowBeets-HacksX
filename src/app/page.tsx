@@ -4,10 +4,13 @@ import { useState } from "react"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "./components/ui/card"
+import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function PlantGrowthPlaylist() {
+  const { data: session } = useSession()
   const [plant, setPlant] = useState("")
   const [playlist, setPlaylist] = useState<string[]>([])
+  const [playlistId, setPlaylistId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -31,11 +34,39 @@ export default function PlantGrowthPlaylist() {
 
       const data = await response.json()
       setPlaylist(data.playlist)
+      setPlaylistId(data.playlistId)
     } catch (error) {
       console.error("Error:", error)
       setError("Failed to create playlist. Please try again.")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleAddToLibrary = async () => {
+    if (!playlistId) {
+      setError("No playlist ID available.")
+      return
+    }
+
+    try {
+      const response = await fetch("/api/add-to-library", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ playlistId }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to add playlist to library")
+      }
+
+      // Optionally, provide user feedback that the playlist was added successfully
+      alert("Playlist added to your library!")
+    } catch (error) {
+      console.error("Error:", error)
+      setError("Failed to add playlist to library. Please try again.")
     }
   }
 
@@ -47,18 +78,25 @@ export default function PlantGrowthPlaylist() {
           <CardDescription>Enter a plant name to generate a growth-stimulating playlist</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="text"
-              value={plant}
-              onChange={(e) => setPlant(e.target.value)}
-              placeholder="Enter plant name"
-              required
-            />
-            <Button type="submit" disabled={loading}>
-              {loading ? "Generating Playlist..." : "Generate Playlist"}
-            </Button>
-          </form>
+          {session ? (
+            <>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <Input
+                  type="text"
+                  value={plant}
+                  onChange={(e) => setPlant(e.target.value)}
+                  placeholder="Enter plant name"
+                  required
+                />
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Generating Playlist..." : "Generate Playlist"}
+                </Button>
+              </form>
+              <Button onClick={() => signOut()}>Sign out</Button>
+            </>
+          ) : (
+            <Button onClick={() => signIn()}>Sign in with Spotify</Button>
+          )}
         </CardContent>
         {error && (
           <CardContent>
@@ -76,6 +114,7 @@ export default function PlantGrowthPlaylist() {
                   </li>
                 ))}
               </ul>
+              <Button onClick={() => handleAddToLibrary()}>Add to Library</Button>
             </div>
           </CardFooter>
         )}
@@ -83,4 +122,3 @@ export default function PlantGrowthPlaylist() {
     </div>
   )
 }
-
