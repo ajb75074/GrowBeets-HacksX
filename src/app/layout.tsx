@@ -19,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/*Add Adobe typekit for Aileron font*/}
         <link rel="stylesheet" href="https://use.typekit.net/gqr7kyx.css" />
       </head>
       <body className={inter.className}>
+        {/* Session Wrapper for Spotify login*/}
         <SessionWrapper>
           {children}
         </SessionWrapper>
