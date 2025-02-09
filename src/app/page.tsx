@@ -19,7 +19,7 @@ export default function PlantGrowthPlaylist() {
 
   const cardTitleStyle = {
     fontFamily: 'aileron, sans-serif',
-    fontWeight: 700,
+    fontWeight: 600,
     fontStyle: 'normal',
     fontSize: '9rem',
     letterSpacing: '-10px',
@@ -117,13 +117,21 @@ export default function PlantGrowthPlaylist() {
         >
           growbeets
         </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          style={{ fontFamily: 'aileron, sans-serif', fontWeight: 300, fontStyle: 'normal', fontSize: '1rem', textAlign: 'center', lineHeight: '1.0', textTransform: 'uppercase', whiteSpace: 'nowrap', marginTop: '1rem' }}
+        >
+          Enter a plant name to generate a growth-stimulating playlist
+        </motion.p>
       </div>
-      <Card className="w-full max-w-md mx-auto mt-4" style={bodyTextStyle}>
-        <CardDescription style={{ ...bodyTextStyle, textAlign: 'center' }}>Enter a plant name to generate a growth-stimulating playlist!</CardDescription>
-        <CardContent style={bodyTextStyle}>
-          {session ? (
+      
+      {session ? (
+        <Card className="w-full max-w-md mx-auto mt-4" style={bodyTextStyle}>
+          <CardContent style={bodyTextStyle}>
             <>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4 flex justify-center flex-col items-center">
                 <Input
                   type="text"
                   value={plant}
@@ -131,33 +139,33 @@ export default function PlantGrowthPlaylist() {
                   placeholder="Enter plant name"
                   required
                 />
-                <Button type="submit" disabled={loading} style={bodyTextStyle}>
+                <Button type="submit" disabled={loading} style={{ borderRadius: '30px', marginTop: '1rem' }}>
                   {loading ? "Generating Playlist..." : "Generate Playlist"}
                 </Button>
               </form>
             </>
-          ) : (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-              <Button onClick={() => signIn()} style={{ ...bodyTextStyle, borderRadius: '30px' }}>Sign in with Spotify</Button>
-            </div>
-          )}
-        </CardContent>
-        {error && (
-          <CardContent style={bodyTextStyle}>
-            <p className="text-red-500" style={bodyTextStyle}>{error}</p>
           </CardContent>
-        )}
-        {playlist.length > 0 && (
-          <CardFooter style={bodyTextStyle}>
-            <div className="w-full">
-              {playlistLink && (
-                <iframe style={{ borderRadius: '12px' }} src={playlistLink} width="100%" height="352" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-              )}
-              <Button onClick={() => handleAddToLibrary()} style={bodyTextStyle}>Add to Library</Button>
-            </div>
-          </CardFooter>
-        )}
-      </Card>
+          {error && (
+            <CardContent style={bodyTextStyle}>
+              <p className="text-red-500" style={bodyTextStyle}>{error}</p>
+            </CardContent>
+          )}
+          {playlist.length > 0 && (
+            <CardFooter style={bodyTextStyle}>
+              <div className="w-full">
+                {playlistLink && (
+                  <iframe style={{ borderRadius: '12px' }} src={playlistLink} width="100%" height="352" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                )}
+                <Button onClick={() => handleAddToLibrary()} style={{ borderRadius: '30px', marginTop: '1rem' }}>Generate Playlist</Button>
+              </div>
+            </CardFooter>
+          )}
+        </Card>
+      ) : (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+          <Button onClick={() => signIn()} style={{ ...bodyTextStyle, borderRadius: '30px', backgroundColor: 'rgb(221, 161, 94)', color: 'rgb(40, 54, 24)', fontWeight: 'bold' }}>Sign in with Spotify</Button>
+        </div>
+      )}
     </div>
     </div>
   )

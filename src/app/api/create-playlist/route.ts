@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Failed to parse ChatGPT response" }, { status: 500 })
     }
 
-    const songList = response.songs.filter((song): song is string => song !== null)
+    const songList = response.songs.filter((song): song is string => song != null)
     const frequency = response.frequency
 
     console.log("Optimal frequency:", frequency)
@@ -81,6 +81,7 @@ export async function POST(req: Request) {
 
     const playlistData = await playlistResponse.json()
     const playlistId = playlistData.id
+    console.log("Playlist ID:", playlistId);
 
     // Search for tracks and get their URIs
     const trackUris = await Promise.all(
@@ -126,5 +127,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message || "Failed to create playlist" }, { status: 500 })
   }
 }
-
-
