@@ -9,7 +9,9 @@ import { useSession, signIn, signOut } from "next-auth/react"
 import Navbar from "./components/ui/navbar"
 
 export default function PlantGrowthPlaylist() {
+  //manages login state or session status
   const { data: session } = useSession()
+  // stores plant name & playlist data, id and link
   const [plant, setPlant] = useState("")
   const [playlist, setPlaylist] = useState<{ uri: string; name: string; artist: string }[]>([])
   const [playlistId, setPlaylistId] = useState<string | null>(null)
@@ -17,6 +19,7 @@ export default function PlantGrowthPlaylist() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  //font styling
   const cardTitleStyle = {
     fontFamily: 'aileron, sans-serif',
     fontWeight: 600,
@@ -38,24 +41,28 @@ export default function PlantGrowthPlaylist() {
     padding: '0.75rem 1.5rem',
   };
 
+  //handles form submission & creates playlist based on plant name entered
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
+  // API calls & requests to create a playlist for given plant 
     try {
       const response = await fetch("/api/create-playlist", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ plant }),
+        body: JSON.stringify({ plant }), //sends plant name into request body
       })
 
+      //error is response is not okay 
       if (!response.ok) {
         throw new Error("Failed to create playlist")
       }
 
+      //parses the JSON repsonse and updates state variables with playlist details
       const data = await response.json()
       setPlaylist(data.playlist)
       setPlaylistId(data.playlistId)
@@ -67,13 +74,14 @@ export default function PlantGrowthPlaylist() {
       setLoading(false)
     }
   }
-
+      //hadles adding the generated playlist to the user's Spotify library
   const handleAddToLibrary = async () => {
     if (!playlistId) {
       setError("No playlist ID available.")
       return
     }
 
+      //sends request to add to the users library
     try {
       const response = await fetch("/api/add-to-library", {
         method: "PUT",
