@@ -138,6 +138,7 @@ export default function PlantGrowthPlaylist() {
                   onChange={(e) => setPlant(e.target.value)}
                   placeholder="Enter plant name"
                   required
+                  style={{marginTop: '0.625rem'}}
                 />
                 <Button type="submit" disabled={loading} style={{ borderRadius: '30px', marginTop: '1rem' }}>
                   {loading ? "Generating Playlist..." : "Generate Playlist"}
@@ -156,7 +157,7 @@ export default function PlantGrowthPlaylist() {
                 {playlistLink && (
                   <iframe style={{ borderRadius: '12px' }} src={playlistLink} width="100%" height="352" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 )}
-                <Button onClick={() => handleAddToLibrary()} style={{ borderRadius: '30px', marginTop: '1rem' }}>Generate Playlist</Button>
+                <Button onClick={() => handleAddToLibrary()} style={{ borderRadius: '30px', marginTop: '1rem' }}>Add to Library</Button>
               </div>
             </CardFooter>
           )}
