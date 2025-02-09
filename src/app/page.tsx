@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "./components/ui/card"
@@ -97,13 +98,25 @@ export default function PlantGrowthPlaylist() {
   return (
     <div className="w-full">
       <Navbar/>
-    <div className="container mx-auto p-4 flex flex-col justify-center items-center h-screen">
+    <div className="container mx-auto p-4 flex flex-col justify-center items-center h-screen parallax">
 
       <div style={{ maxWidth: '600px', textAlign: 'center' }}>
-        <p style={{ fontFamily: 'aileron, sans-serif', fontWeight: 300, fontStyle: 'normal', fontSize: '1.5rem', textAlign: 'justify', lineHeight: '1.0', textTransform: 'uppercase' }}>
+        <motion.p
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          style={{ fontFamily: 'aileron, sans-serif', fontWeight: 300, fontStyle: 'normal', fontSize: '1.5rem', textAlign: 'justify', lineHeight: '1.0', textTransform: 'uppercase' }}
+        >
           Music is Nature’s secret language. Research shows that specific sound frequencies can actually boost plant growth, helping them thrive in ways we never imagined.
-        </p>
-        <h1 style={cardTitleStyle}>growbeets</h1>
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          style={cardTitleStyle}
+        >
+          growbeets
+        </motion.h1>
       </div>
       <Card className="w-full max-w-md mx-auto mt-4" style={bodyTextStyle}>
         <CardDescription style={{ ...bodyTextStyle, textAlign: 'center' }}>Enter a plant name to generate a growth-stimulating playlist!</CardDescription>
@@ -125,7 +138,7 @@ export default function PlantGrowthPlaylist() {
             </>
           ) : (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-              <Button onClick={() => signIn()} style={bodyTextStyle}>Sign in with Spotify</Button>
+              <Button onClick={() => signIn()} style={{ ...bodyTextStyle, borderRadius: '30px' }}>Sign in with Spotify</Button>
             </div>
           )}
         </CardContent>

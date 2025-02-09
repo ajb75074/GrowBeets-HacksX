@@ -9,9 +9,9 @@ export default function Navbar() {
   // Check if session is loading
   if (status === "loading") {
     return (
-      <nav className="flex items-center justify-between p-4 bg-black text-white fixed top-0 left-0 w-full z-10">
+      <nav className="flex items-center justify-between p-4 bg-primary-background text-primary-text fixed top-0 left-0 w-full z-10">
         <div className="flex items-center">
-          <Image src={"/globe.svg"} alt="Logo" width={50} height={50} />
+          <Image src={"/GrowBeetsLogo.png"} alt="Logo" width={100} height={100} />
 
         </div>
       </nav>
@@ -19,17 +19,17 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="flex items-center justify-between p-4 bg-black text-white">
+    <nav className="flex items-center justify-between p-4 bg-primary-background text-primary-text">
       {/* Logo on the left */}
       <div className="flex items-center">
-        <Image src={"/logo.png"} alt="Logo" width={50} height={50} />
+        <Image src={"/GrowBeetsLogo.png"} alt="Logo" width={100} height={100} />
       </div>
 
       {/* Sign out button on the right */}
       <div>
         {session ? (
 <button
-  className="bg-white text-black px-4 py-2 rounded-md font-aileron"
+  className="bg-primary-background text-primary-text px-4 py-2 rounded-md font-aileron"
   onClick={() => signOut()}
 >
   Sign Out
