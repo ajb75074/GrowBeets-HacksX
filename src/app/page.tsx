@@ -103,11 +103,14 @@ export default function PlantGrowthPlaylist() {
     }
   }
 
+  
   return (
     <div className="w-full">
       <Navbar/>
+      {/* Adding blurb & div for animation*/}
     <div className="container mx-auto p-4 flex flex-col justify-center items-center h-screen parallax">
 
+      {/* Blurb animation and text styling*/}
       <div style={{ maxWidth: '600px', textAlign: 'center' }}>
         <motion.p
           initial={{ opacity: 0, y: 50 }}
@@ -117,6 +120,8 @@ export default function PlantGrowthPlaylist() {
         >
           Music is Nature’s secret language. Research shows that specific sound frequencies can actually boost plant growth, helping them thrive in ways we never imagined.
         </motion.p>
+        {/* GrowBeets main header styling and animation details
+            Slides text up the screen */}
         <motion.h1
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -125,6 +130,7 @@ export default function PlantGrowthPlaylist() {
         >
           growbeets
         </motion.h1>
+        {/* Textbox styling and animation details*/}
         <motion.p
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -135,10 +141,12 @@ export default function PlantGrowthPlaylist() {
         </motion.p>
       </div>
       
+      {/* Main card layout details and page transitions*/}
       {session ? (
         <Card className="w-full max-w-md mx-auto mt-4" style={bodyTextStyle}>
           <CardContent style={bodyTextStyle}>
             <>
+            {/* Handle plant input from user*/}
               <form onSubmit={handleSubmit} className="space-y-4 flex justify-center flex-col items-center">
                 <Input
                   type="text"
@@ -148,17 +156,20 @@ export default function PlantGrowthPlaylist() {
                   required
                   style={{marginTop: '0.625rem'}}
                 />
+                {/* Transition to Generating Playlist*/}
                 <Button type="submit" disabled={loading} style={{ borderRadius: '30px', marginTop: '1rem' }}>
                   {loading ? "Generating Playlist..." : "Generate Playlist"}
                 </Button>
               </form>
             </>
           </CardContent>
+          {/* Display error popup*/}
           {error && (
             <CardContent style={bodyTextStyle}>
               <p className="text-red-500" style={bodyTextStyle}>{error}</p>
             </CardContent>
           )}
+          {/* Display embedded playlist and a button to add it to the user's Spotify library. */}
           {playlist.length > 0 && (
             <CardFooter style={bodyTextStyle}>
               <div className="w-full">
@@ -169,6 +180,7 @@ export default function PlantGrowthPlaylist() {
               </div>
             </CardFooter>
           )}
+          {/* Display option to log into Spotify away from GrowBeets main page*/}
         </Card>
       ) : (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
