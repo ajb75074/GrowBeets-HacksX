@@ -13,19 +13,25 @@ export const authOptions = {
     SpotifyProvider({
       clientId: clientId,
       clientSecret: clientSecret,
-      authorization:
-        'https://accounts.spotify.com/authorize?scope=playlist-modify-public playlist-modify-private user-follow-modify',
+      authorization: {
+        url: 'https://accounts.spotify.com/authorize',
+        params: {
+          scope: 'playlist-modify-public playlist-modify-private user-follow-modify user-read-email user-read-private',
+        },
+      },
     }),
   ],
   callbacks: {
-    async jwt({ token, account }: any) {
-      // Persist the OAuth access_token to the token right after signin
+    async jwt({ token, account, user }: any) {
+      // Persist the OAuth access_token and refresh_token to the token right after signin
       if (account) {
         token.accessToken = account.access_token
+        token.refreshToken = account.refresh_token
       }
+
       return token
     },
-    async session({ session, token, user }: any) {
+    async session({ session, token }: any) {
       // Send properties to the client, like an access_token from a provider.
       session.accessToken = token.accessToken
       return session
